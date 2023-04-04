@@ -33,12 +33,51 @@ exports.updateSauce = (req, res, next) => {
     let sauceObject = req.file ?
         {
             ...JSON.parse(req.body.sauce),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+            imageUrl: `${req.protocol}://${req.get(`host`)}/images/${req.file.filename}`
         } : { ...req.body };
 
     Sauce.updateOne({ _id: req.params.id, userId: req.auth.userId }, { ...sauceObject, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Sauce mise à jour !' }))
+        .then(() => res.status(200).json({ message: `Sauce mise à jour !` }))
         .catch((error) => res.status(400).json({ error }));
+};
+
+exports.likeSauce = (req, res, next) => {
+    const userId = req.body.userId;
+    const like = req.body.like;
+    Sauce.findOne({ _id: req.params.id })
+        .then((sauce) => {
+            switch (like) {
+                case 1:
+                    if (!sauce.usersLiked.includes(userId)) {
+                        sauce.usersLiked.push(userId);
+                        sauce.likes++;
+                    }
+                    break;
+                case 0:
+                    if (sauce.usersLiked.includes(userId)) {
+                        sauce.usersLiked.pull(userId);
+                        sauce.likes--;
+                    }
+                    if (sauce.usersDisliked.includes(userId)) {
+                        sauce.usersDisliked.pull(userId);
+                        sauce.dislikes--;
+                    }
+                    break;
+                case -1:
+                    if (!sauce.usersDisliked.includes(userId)) {
+                        sauce.usersDisliked.push(userId);
+                        sauce.dislikes++;
+                    }
+                    break;
+                default:
+                    return res.status(400).json({ message: `Valeur j'aime invalide` });
+            }
+
+            sauce.save()
+                .then(() => res.status(200).json({ message: `Sauce aimée/détestée avec succès !` }))
+                .catch((error) => res.status(400).json({ error }));
+        })
+        .catch((error) => res.status(500).json({ error }));
 };
 
 // Delete 

@@ -1,7 +1,7 @@
 const express = require(`express`);
 const router = express.Router();
 const userController = require(`../controllers/userController`);
-const multerConfig = require('../middleware/multer-config');
+const multerConfig = require(`../middleware/multer-config`);
 const auth = require(`../middleware/auth`);
 
 router.post(`/upload`, auth, multerConfig, (req, res) => {
