@@ -5,13 +5,11 @@ const app = express();
 const userRoutes = require(`./routes/userRoutes`);
 const sauceRoutes = require(`./routes/sauceRoutes`);
 const path = require(`path`);
-const dotenv = require(`dotenv`);
-
-dotenv.config();
+require(`dotenv`).config()
 
 app.use(cors());
 
-mongoose.connect(`mongodb+srv://alexv3rtmtool:9yQaUvbOTqzpnmWA@cluster0.zstmuw6.mongodb.net/?retryWrites=true&w=majority`,
+mongoose.connect(process.env.DATABASE_URL,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
