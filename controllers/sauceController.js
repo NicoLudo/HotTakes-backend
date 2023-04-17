@@ -51,6 +51,11 @@ exports.likeSauce = (req, res, next) => {
                     if (!sauce.usersLiked.includes(userId)) {
                         sauce.usersLiked.push(userId);
                         sauce.likes++;
+
+                        if (sauce.usersDisliked.includes(userId)) {
+                            sauce.usersDisliked.pull(userId);
+                            sauce.dislikes--;
+                        }
                     }
                     break;
                 case 0:
@@ -67,6 +72,11 @@ exports.likeSauce = (req, res, next) => {
                     if (!sauce.usersDisliked.includes(userId)) {
                         sauce.usersDisliked.push(userId);
                         sauce.dislikes++;
+
+                        if (sauce.usersLiked.includes(userId)) {
+                            sauce.usersLiked.pull(userId);
+                            sauce.likes--;
+                        }
                     }
                     break;
                 default:

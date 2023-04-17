@@ -5,6 +5,9 @@ const app = express();
 const userRoutes = require(`./routes/userRoutes`);
 const sauceRoutes = require(`./routes/sauceRoutes`);
 const path = require(`path`);
+const dotenv = require(`dotenv`);
+
+dotenv.config();
 
 app.use(cors());
 
