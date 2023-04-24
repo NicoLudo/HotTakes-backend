@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
             await Sauce.findByIdAndUpdate(req.params.id, { imageUrl: imageUrl });
             callback(null, newImage);
         } else {
-            callback(new Error(`MIME type not supported`), null);
+            callback(new Error(`Type MIME non pris en charge`), null);
         }
     }
 });
@@ -43,9 +43,9 @@ const storage = multer.diskStorage({
 function deleteFile(filePath) {
     fs.unlink(path.join(imagesFolder, `images`, filePath), (err) => {
         if (err) {
-            console.error(`Failed to delete old image: ${err}`);
+            console.error(`Échec de la suppression de l'ancienne image : ${err}`);
         } else {
-            console.log(`Old image deleted successfully`);
+            console.log(`Ancienne image supprimée avec succès`);
         }
     });
 }
