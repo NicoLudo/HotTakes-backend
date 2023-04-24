@@ -1,20 +1,24 @@
+// Importation des modules nécessaires
 const Sauce = require(`../models/Sauce`);
 const fs = require(`fs`);
 
-// Read 
+// Fonctions CRUD (Create, Read, Update, Delete) pour les sauces
+
+// Récupérer toutes les sauces (Read) 
 exports.getAllSauces = (req, res, next) => {
     Sauce.find()
         .then((sauces) => res.status(200).json(sauces))
         .catch((error) => res.status(400).json({ error }));
 };
 
+// Récupérer une sauce spécifique (Read)
 exports.getSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => res.status(200).json(sauce))
         .catch((error) => res.status(404).json({ error }));
 };
 
-// Create 
+// Créer une nouvelle sauce (Create)
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
@@ -28,7 +32,7 @@ exports.createSauce = (req, res, next) => {
         .catch((error) => res.status(400).json({ error }));
 };
 
-// Update 
+// Mettre à jour une sauce existante (Update)
 exports.updateSauce = (req, res, next) => {
     let sauceObject = req.file ?
         {
@@ -41,6 +45,7 @@ exports.updateSauce = (req, res, next) => {
         .catch((error) => res.status(400).json({ error }));
 };
 
+// Gérer les "j'aime" et les "je n'aime pas" pour une sauce (Update)
 exports.likeSauce = (req, res, next) => {
     const userId = req.body.userId;
     const like = req.body.like;
@@ -90,7 +95,7 @@ exports.likeSauce = (req, res, next) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-// Delete 
+// Supprimer une sauce (Delete)
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {

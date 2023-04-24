@@ -1,16 +1,20 @@
+// Importation des modules nécessaires
 const multer = require(`multer`);
 const path = require(`path`);
 const fs = require(`fs`);
 const Sauce = require(`../models/Sauce`);
 
+// Configuration des types MIME
 const MIME_TYPES = {
     'image/jpg': `jpg`,
     'image/jpeg': `jpg`,
     'image/png': `png`
 };
 
+// Définition du dossier des images
 const imagesFolder = path.dirname(require.main.filename);
 
+// Configuration du stockage des fichiers
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, path.join(imagesFolder, `images`));
@@ -35,6 +39,7 @@ const storage = multer.diskStorage({
     }
 });
 
+// Fonction pour supprimer un fichier
 function deleteFile(filePath) {
     fs.unlink(path.join(imagesFolder, `images`, filePath), (err) => {
         if (err) {
@@ -45,4 +50,5 @@ function deleteFile(filePath) {
     });
 }
 
+// Exportation de la configuration Multer
 module.exports = multer({ storage: storage }).single(`image`);

@@ -1,8 +1,10 @@
+// Importation des modules nécessaires
 const User = require(`../models/User`);
 const bcrypt = require(`bcryptjs`);
 const jwt = require(`jsonwebtoken`);
 require(`dotenv`).config()
 
+// Fonction d'inscription (signup)
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
@@ -17,6 +19,7 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
 };
 
+// Fonction d'authentification (login)
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {
