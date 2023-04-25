@@ -40,9 +40,17 @@ exports.updateSauce = (req, res, next) => {
             imageUrl: `${req.protocol}://${req.get(`host`)}/images/${req.file.filename}`
         } : { ...req.body };
 
-    Sauce.updateOne({ _id: req.params.id, userId: req.auth.userId }, { ...sauceObject, _id: req.params.id })
-        .then(() => res.status(200).json({ message: `Sauce mise à jour !` }))
-        .catch((error) => res.status(400).json({ error }));
+    Sauce.findOne({ _id: req.params.id })
+        .then((sauce) => {
+            if (sauce.userId.toString() === req.auth.userId.toString()) {
+                Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                    .then(() => res.status(200).json({ message: `Sauce mise à jour !` }))
+                    .catch((error) => res.status(400).json({ error }));
+            } else {
+                res.status(403).json({ message: `Vous n'êtes pas autorisé à mettre à jour cette sauce.` });
+            }
+        })
+        .catch((error) => res.status(500).json({ error }));
 };
 
 // Gérer les "j'aime" et les "je n'aime pas" pour une sauce (Update)
@@ -99,12 +107,16 @@ exports.likeSauce = (req, res, next) => {
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
-            const filename = sauce.imageUrl.split(`/images/`)[1];
-            fs.unlink(`images/${filename}`, () => {
-                Sauce.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: `Sauce supprimée !` }))
-                    .catch((error) => res.status(400).json({ error }));
-            });
+            if (sauce.userId.toString() === req.auth.userId.toString()) {
+                const filename = sauce.imageUrl.split(`/images/`)[1];
+                fs.unlink(`images/${filename}`, () => {
+                    Sauce.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: `Sauce supprimée !` }))
+                        .catch((error) => res.status(400).json({ error }));
+                });
+            } else {
+                res.status(403).json({ message: `Vous n'êtes pas autorisé à supprimer cette sauce.` });
+            }
         })
         .catch((error) => res.status(500).json({ error }));
 };
